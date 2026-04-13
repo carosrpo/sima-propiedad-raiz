@@ -384,7 +384,7 @@ function initFormulario() {
             estrato: Number(document.getElementById('estrato').value) || 0,
             antiguedad: Number(document.getElementById('antiguedad').value) || 0,
             adminstracion: Number(document.getElementById('administracion').value) || 0,
-            negociable: document.querySelector('input[name="negociable"]:checked').value === 'si',
+            negociable: document.getElementById('negociable').checked,
             contactoNombre: document.getElementById('contactoNombre').value.trim(),
             contactoTelefono: document.getElementById('contactoTelefono').value.trim(),
             contactoEmail: document.getElementById('contactoEmail').value.trim(),
@@ -469,6 +469,15 @@ function initEventosPublicar() {
                 };
                 reader.readAsDataURL(file);
             });
+        });
+    }
+
+    // Toggle negociable
+    const toggleNegociable = document.getElementById('negociable');
+    const toggleEstado = document.getElementById('toggleEstado');
+    if (toggleNegociable && toggleEstado) {
+        toggleNegociable.addEventListener('change', () => {
+            toggleEstado.textContent = toggleNegociable.checked ? 'Sí' : 'No';
         });
     }
 

@@ -61,16 +61,12 @@
                                 <input type="number" id="precio" placeholder="Ej: 350000000" min="1" required>
                                 <span class="input-hint">Ingrese el valor en pesos colombianos</span>
                                 <span class="error-msg">Ingrese el precio</span>
-                                <div class="radio-group">
-                                    <label class="radio-label">
-                                        <input type="radio" name="negociable" id="negociableSi" value="si">
-                                        <span class="radio-custom"></span>
-                                        Sí, es negociable
-                                    </label>
-                                    <label class="radio-label">
-                                        <input type="radio" name="negociable" id="negociableNo" value="no" checked>
-                                        <span class="radio-custom"></span>
-                                        No, precio fijo
+                                <div class="toggle-negociable">
+                                    <span class="toggle-pregunta">¿Precio negociable?</span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="negociable">
+                                        <span class="toggle-slider"></span>
+                                        <span class="toggle-estado" id="toggleEstado">No</span>
                                     </label>
                                 </div>
                             </div>
