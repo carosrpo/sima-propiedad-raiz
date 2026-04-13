@@ -908,9 +908,9 @@ img {
     text-align: center;
     padding: 40px;
 }
-.mensaje-exito i {
+.mensaje-exito > i {
     font-size: 3.5rem;
-    color: var(--success);
+    color: var(--primary);
     margin-bottom: 16px;
 }
 .mensaje-exito h3 {
@@ -920,6 +920,27 @@ img {
 .mensaje-exito p {
     color: var(--gray-600);
     margin-bottom: 20px;
+}
+.mensaje-exito .btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.mensaje-exito .btn-primary {
+    background: var(--primary);
+}
+.mensaje-exito .btn-primary:hover {
+    background: var(--primary-light);
+}
+.mensaje-exito .btn-outline {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+.mensaje-exito .btn-outline:hover {
+    background: var(--primary);
+    color: var(--white);
 }
 
 /* ========== Footer ========== */
