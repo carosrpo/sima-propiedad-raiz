@@ -478,6 +478,7 @@ function initEventosPublicar() {
     if (toggleNegociable && toggleEstado) {
         toggleNegociable.addEventListener('change', () => {
             toggleEstado.textContent = toggleNegociable.checked ? 'Sí' : 'No';
+            toggleEstado.classList.toggle('activo', toggleNegociable.checked);
         });
     }
 
