@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Publicar Propiedad - SiMa Propiedad Raíz</title>
+    <title>Publicar propiedad - SiMa Propiedad Raíz</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -20,7 +20,7 @@
                     <i class="fas fa-home"></i> Inicio
                 </a>
                 <a href="publicar.html" class="nav-link btn-publicar active">
-                    <i class="fas fa-plus-circle"></i> Publicar Propiedad
+                    <i class="fas fa-plus-circle"></i> Publicar propiedad
                 </a>
             </nav>
             <button class="menu-toggle" id="menuToggle">
@@ -33,7 +33,7 @@
     <section class="publicar-section">
         <div class="container">
             <div class="form-card">
-                <h2><i class="fas fa-plus-circle" style="color: var(--accent);"></i> Publicar Propiedad</h2>
+                <h2><i class="fas fa-plus-circle" style="color: var(--accent);"></i> Publicar propiedad</h2>
                 <p class="subtitulo">Complete los datos de su propiedad para que los compradores puedan encontrarla</p>
 
                 <form id="formPublicar">
@@ -61,6 +61,22 @@
                                 <input type="number" id="precio" placeholder="Ej: 350000000" min="1" required>
                                 <span class="input-hint">Ingrese el valor en pesos colombianos</span>
                                 <span class="error-msg">Ingrese el precio</span>
+                            </div>
+                        </div>
+
+                        <div class="form-grupo">
+                            <label>¿El precio es negociable?</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="negociable" id="negociableSi" value="si">
+                                    <span class="radio-custom"></span>
+                                    Sí, es negociable
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="negociable" id="negociableNo" value="no" checked>
+                                    <span class="radio-custom"></span>
+                                    No, precio fijo
+                                </label>
                             </div>
                         </div>
 
@@ -200,7 +216,7 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-lg btn-block">
-                        <i class="fas fa-paper-plane"></i> Publicar Propiedad
+                        <i class="fas fa-paper-plane"></i> Publicar propiedad
                     </button>
                 </form>
 

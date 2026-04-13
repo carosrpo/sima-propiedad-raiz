@@ -151,7 +151,7 @@ function crearTarjeta(prop) {
             <div class="card-imagen">
                 ${imagen}
                 <span class="card-badge badge-${prop.tipo}">${tipoNombre}</span>
-                <span class="card-precio">${formatearPrecio(prop.precio)}</span>
+                <span class="card-precio">${formatearPrecio(prop.precio)}${prop.negociable ? ' <small style="font-size:0.7rem;opacity:0.85">Negociable</small>' : ''}</span>
             </div>
             <div class="card-body">
                 <h3 class="card-titulo">${prop.titulo}</h3>
@@ -196,6 +196,7 @@ function abrirDetalle(prop) {
             </p>
             <div class="detalle-badges">
                 <span class="detalle-badge"><i class="fas ${icono}"></i> ${tipoNombre}</span>
+                ${prop.negociable ? '<span class="detalle-badge" style="background:#e8f5e9;color:#2e7d32;"><i class="fas fa-handshake"></i> Precio negociable</span>' : '<span class="detalle-badge"><i class="fas fa-tag"></i> Precio fijo</span>'}
                 ${prop.estrato ? `<span class="detalle-badge"><i class="fas fa-layer-group"></i> Estrato ${prop.estrato}</span>` : ''}
                 <span class="detalle-badge"><i class="fas fa-calendar-alt"></i> Publicado: ${new Date(prop.fechaPublicacion).toLocaleDateString('es-CO')}</span>
             </div>
@@ -383,6 +384,7 @@ function initFormulario() {
             estrato: Number(document.getElementById('estrato').value) || 0,
             antiguedad: Number(document.getElementById('antiguedad').value) || 0,
             adminstracion: Number(document.getElementById('administracion').value) || 0,
+            negociable: document.querySelector('input[name="negociable"]:checked').value === 'si',
             contactoNombre: document.getElementById('contactoNombre').value.trim(),
             contactoTelefono: document.getElementById('contactoTelefono').value.trim(),
             contactoEmail: document.getElementById('contactoEmail').value.trim(),
