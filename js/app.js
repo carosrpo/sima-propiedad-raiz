@@ -257,10 +257,8 @@ function initEventos() {
             const filtros = {
                 tipo: document.getElementById('filtroTipo').value,
                 departamento: document.getElementById('filtroDepartamento').value,
-                ciudad: document.getElementById('filtroCiudad').value,
                 precioMin: document.getElementById('filtroPrecioMin').value,
                 precioMax: document.getElementById('filtroPrecioMax').value,
-                estrato: document.getElementById('filtroEstrato').value,
                 busqueda: searchInput ? searchInput.value : ''
             };
             cargarPropiedades(filtros);
@@ -273,10 +271,8 @@ function initEventos() {
         btnLimpiar.addEventListener('click', () => {
             document.getElementById('filtroTipo').value = '';
             document.getElementById('filtroDepartamento').value = '';
-            document.getElementById('filtroCiudad').innerHTML = '<option value="">Todas</option>';
             document.getElementById('filtroPrecioMin').value = '';
             document.getElementById('filtroPrecioMax').value = '';
-            document.getElementById('filtroEstrato').value = '';
             if (searchInput) searchInput.value = '';
             cargarPropiedades();
         });
