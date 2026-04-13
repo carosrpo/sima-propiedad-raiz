@@ -1073,6 +1073,26 @@ img {
     padding: 20px 0;
     text-align: center;
     font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.footer-admin-link {
+    font-size: 0.8rem;
+    color: var(--gray-600);
+    opacity: 0.6;
+    transition: var(--transition);
+}
+.footer-admin-link:hover {
+    opacity: 1;
+    color: var(--gray-400);
+}
+.footer-admin-link i {
+    margin-right: 3px;
+    font-size: 0.7rem;
 }
 
 /* ========== Responsive ========== */
