@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiMa Propiedad Raíz - Compra y Venta de Inmuebles en Colombia</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <i class="fas fa-building"></i>
+                <span>SiMa <strong>Propiedad Raíz</strong></span>
+            </a>
+            <nav class="nav">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+                <a href="publicar.html" class="nav-link btn-publicar">
+                    <i class="fas fa-plus-circle"></i> Publicar Propiedad
+                </a>
+            </nav>
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h1>Encuentra tu propiedad ideal en Colombia</h1>
+            <p>Compra, vende y explora propiedades y lotes en todo el territorio colombiano</p>
+            <div class="hero-search">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Buscar por ciudad, barrio o tipo de propiedad...">
+                    <button id="btnBuscar" class="btn btn-primary">Buscar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filtros -->
+    <section class="filtros-section">
+        <div class="container">
+            <div class="filtros-bar">
+                <div class="filtro-grupo">
+                    <label for="filtroTipo">Tipo</label>
+                    <select id="filtroTipo">
+                        <option value="">Todos</option>
+                        <option value="casa">Casa</option>
+                        <option value="apartamento">Apartamento</option>
+                        <option value="lote">Lote</option>
+                        <option value="finca">Finca</option>
+                        <option value="local">Local Comercial</option>
+                        <option value="oficina">Oficina</option>
+                        <option value="bodega">Bodega</option>
+                    </select>
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtroDepartamento">Departamento</label>
+                    <select id="filtroDepartamento">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtroCiudad">Ciudad</label>
+                    <select id="filtroCiudad">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtroPrecioMin">Precio mín.</label>
+                    <input type="number" id="filtroPrecioMin" placeholder="$ Mínimo">
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtroPrecioMax">Precio máx.</label>
+                    <input type="number" id="filtroPrecioMax" placeholder="$ Máximo">
+                </div>
+                <div class="filtro-grupo">
+                    <label for="filtroEstrato">Estrato</label>
+                    <select id="filtroEstrato">
+                        <option value="">Todos</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
+                </div>
+                <button id="btnFiltrar" class="btn btn-secondary">
+                    <i class="fas fa-filter"></i> Filtrar
+                </button>
+                <button id="btnLimpiar" class="btn btn-outline">
+                    <i class="fas fa-times"></i> Limpiar
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Propiedades -->
+    <section class="propiedades-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Propiedades Disponibles</h2>
+                <span class="contador" id="contadorResultados">0 resultados</span>
+            </div>
+            <div class="propiedades-grid" id="propiedadesGrid">
+                <!-- Se llena dinámicamente -->
+            </div>
+            <div class="sin-resultados" id="sinResultados" style="display:none;">
+                <i class="fas fa-search"></i>
+                <h3>No se encontraron propiedades</h3>
+                <p>Intenta ajustar los filtros o <a href="publicar.html">publica una propiedad</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Detalle -->
+    <div class="modal" id="modalDetalle">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div id="modalBody">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3><i class="fas fa-building"></i> SiMa Propiedad Raíz</h3>
+                    <p>Tu portal de confianza para compra y venta de propiedades en Colombia.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Tipos de Propiedad</h4>
+                    <ul>
+                        <li><a href="#" data-filtro-tipo="casa">Casas</a></li>
+                        <li><a href="#" data-filtro-tipo="apartamento">Apartamentos</a></li>
+                        <li><a href="#" data-filtro-tipo="lote">Lotes</a></li>
+                        <li><a href="#" data-filtro-tipo="finca">Fincas</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Ciudades Principales</h4>
+                    <ul>
+                        <li><a href="#" data-filtro-ciudad="Bogotá">Bogotá</a></li>
+                        <li><a href="#" data-filtro-ciudad="Medellín">Medellín</a></li>
+                        <li><a href="#" data-filtro-ciudad="Cali">Cali</a></li>
+                        <li><a href="#" data-filtro-ciudad="Barranquilla">Barranquilla</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contacto</h4>
+                    <p><i class="fas fa-envelope"></i> info@simapropiedad.com</p>
+                    <p><i class="fas fa-phone"></i> +57 300 123 4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SiMa Propiedad Raíz - Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/datos-colombia.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
