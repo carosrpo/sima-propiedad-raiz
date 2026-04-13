@@ -69,6 +69,7 @@ function initPaginaPrincipal() {
     cargarPropiedades();
     initEventos();
     initFormatoMiles();
+    initFormularioInteres();
 }
 
 function cargarFiltros() {
@@ -216,9 +217,6 @@ function abrirDetalle(prop) {
     if (prop.antiguedad) specs += `<div class="spec-item"><i class="fas fa-calendar"></i><div><div class="spec-label">Antigüedad</div><div class="spec-value">${prop.antiguedad} años</div></div></div>`;
     if (prop.adminstracion) specs += `<div class="spec-item"><i class="fas fa-file-invoice-dollar"></i><div><div class="spec-label">Administración</div><div class="spec-value">${formatearPrecio(prop.adminstracion)}/mes</div></div></div>`;
 
-    const whatsappMsg = encodeURIComponent(`Hola, estoy interesado en la propiedad: ${prop.titulo} publicada en SiMa Propiedad Raíz. ¿Podría darme más información?`);
-    const whatsappLink = `https://wa.me/57${prop.contactoTelefono}?text=${whatsappMsg}`;
-
     body.innerHTML = `
         <div class="detalle-imagen">${imagen}</div>
         <div class="detalle-body">
@@ -237,21 +235,87 @@ function abrirDetalle(prop) {
             </div>
             <p class="detalle-descripcion">${prop.descripcion}</p>
             <div class="detalle-specs">${specs}</div>
-            <div class="detalle-contacto">
-                <div class="contacto-info">
-                    <h4><i class="fas fa-user"></i> ${prop.contactoNombre}</h4>
-                    <p><i class="fas fa-phone"></i> +57 ${prop.contactoTelefono}</p>
-                    <p><i class="fas fa-envelope"></i> ${prop.contactoEmail}</p>
-                </div>
-                <a href="${whatsappLink}" target="_blank" class="btn btn-success btn-lg">
-                    <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
-                </a>
+            <div class="detalle-cta">
+                <button class="btn btn-primary btn-lg btn-block btn-me-interesa" data-propiedad-id="${prop.id}">
+                    <i class="fas fa-heart"></i> Me interesa
+                </button>
             </div>
         </div>
     `;
 
+    // Evento del botón "Me interesa"
+    body.querySelector('.btn-me-interesa').addEventListener('click', () => {
+        abrirFormularioInteres(prop);
+    });
+
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
+}
+
+// ========== Formulario "Me interesa" ==========
+
+function abrirFormularioInteres(prop) {
+    // Ocultar el modal de detalle
+    document.getElementById('modalDetalle').classList.remove('active');
+
+    const modalInteres = document.getElementById('modalInteres');
+    const tituloRef = document.getElementById('interesPropiedad');
+    tituloRef.textContent = prop.titulo;
+    modalInteres.dataset.propiedadId = prop.id;
+
+    // Limpiar formulario
+    document.getElementById('formInteres').reset();
+    document.getElementById('interesExito').style.display = 'none';
+    document.getElementById('formInteresFields').style.display = 'block';
+
+    modalInteres.classList.add('active');
+}
+
+function cerrarModalInteres() {
+    const modal = document.getElementById('modalInteres');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function guardarLead(lead) {
+    const leads = JSON.parse(localStorage.getItem('leads') || '[]');
+    leads.unshift(lead);
+    localStorage.setItem('leads', JSON.stringify(leads));
+}
+
+function initFormularioInteres() {
+    const modal = document.getElementById('modalInteres');
+    if (!modal) return;
+
+    // Cerrar modal
+    modal.querySelector('.modal-close').addEventListener('click', cerrarModalInteres);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) cerrarModalInteres();
+    });
+
+    // Submit
+    const form = document.getElementById('formInteres');
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const lead = {
+            id: 'lead-' + Date.now(),
+            propiedadId: modal.dataset.propiedadId,
+            nombre: document.getElementById('interesNombre').value.trim(),
+            telefono: document.getElementById('interesTelefono').value.trim(),
+            email: document.getElementById('interesEmail').value.trim(),
+            mensaje: document.getElementById('interesMensaje').value.trim(),
+            fecha: new Date().toISOString()
+        };
+
+        guardarLead(lead);
+
+        // Mostrar éxito
+        document.getElementById('formInteresFields').style.display = 'none';
+        document.getElementById('interesExito').style.display = 'block';
+    });
 }
 
 function cerrarModal() {
