@@ -9,6 +9,40 @@ function formatearPrecio(precio) {
     }).format(precio);
 }
 
+// Formatear número con separador de miles (punto)
+function formatoMiles(valor) {
+    const num = String(valor).replace(/\D/g, '');
+    if (!num) return '';
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+// Obtener valor numérico limpio de un campo con formato de miles
+function valorNumerico(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
+    return Number(String(el.value).replace(/\./g, '')) || 0;
+}
+
+// Inicializar todos los campos con clase .formato-miles
+function initFormatoMiles() {
+    document.querySelectorAll('.formato-miles').forEach(input => {
+        input.addEventListener('input', function () {
+            const pos = this.selectionStart;
+            const antesLen = this.value.length;
+            const limpio = this.value.replace(/\D/g, '');
+            this.value = formatoMiles(limpio);
+            const despuesLen = this.value.length;
+            const nuevaPos = pos + (despuesLen - antesLen);
+            this.setSelectionRange(nuevaPos, nuevaPos);
+        });
+
+        // Formatear valor inicial si tiene uno
+        if (input.value && input.value !== '0') {
+            input.value = formatoMiles(input.value);
+        }
+    });
+}
+
 function generarId() {
     return 'prop-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
 }
@@ -34,6 +68,7 @@ function initPaginaPrincipal() {
     cargarFiltros();
     cargarPropiedades();
     initEventos();
+    initFormatoMiles();
 }
 
 function cargarFiltros() {
@@ -257,8 +292,8 @@ function initEventos() {
             const filtros = {
                 tipo: document.getElementById('filtroTipo').value,
                 departamento: document.getElementById('filtroDepartamento').value,
-                precioMin: document.getElementById('filtroPrecioMin').value,
-                precioMax: document.getElementById('filtroPrecioMax').value,
+                precioMin: valorNumerico('filtroPrecioMin'),
+                precioMax: valorNumerico('filtroPrecioMax'),
                 busqueda: searchInput ? searchInput.value : ''
             };
             cargarPropiedades(filtros);
@@ -322,6 +357,7 @@ function initPaginaPublicar() {
     cargarSelectsDepartamento();
     initFormulario();
     initEventosPublicar();
+    initFormatoMiles();
 }
 
 function cargarSelectsDepartamento() {
@@ -368,18 +404,18 @@ function initFormulario() {
             tipo: document.getElementById('tipoPropiedad').value,
             titulo: document.getElementById('titulo').value.trim(),
             descripcion: document.getElementById('descripcion').value.trim(),
-            precio: Number(document.getElementById('precio').value),
+            precio: valorNumerico('precio'),
             departamento: document.getElementById('departamento').value,
             ciudad: document.getElementById('ciudad').value,
             barrio: document.getElementById('barrio').value.trim(),
             direccion: document.getElementById('direccion').value.trim(),
-            area: Number(document.getElementById('area').value) || 0,
+            area: valorNumerico('area'),
             habitaciones: Number(document.getElementById('habitaciones').value) || 0,
             banos: Number(document.getElementById('banos').value) || 0,
             parqueaderos: Number(document.getElementById('parqueaderos').value) || 0,
             estrato: Number(document.getElementById('estrato').value) || 0,
             antiguedad: Number(document.getElementById('antiguedad').value) || 0,
-            adminstracion: Number(document.getElementById('administracion').value) || 0,
+            adminstracion: valorNumerico('administracion'),
             negociable: document.getElementById('negociable').checked,
             contactoNombre: '',
             contactoTelefono: '',
@@ -476,16 +512,6 @@ function initEventosPublicar() {
         });
     }
 
-    // Formato de precio en tiempo real
-    const precioInput = document.getElementById('precio');
-    if (precioInput) {
-        precioInput.addEventListener('input', () => {
-            const hint = precioInput.parentElement.querySelector('.input-hint');
-            if (hint && precioInput.value) {
-                hint.textContent = formatearPrecio(Number(precioInput.value));
-            }
-        });
-    }
 }
 
 // ========== Inicialización ==========
