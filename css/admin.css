@@ -392,7 +392,17 @@
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 0.85rem;
+}
+.lead-propiedad a,
+.lead-nombre a {
+    color: var(--primary-light);
+    font-weight: 600;
+    transition: var(--transition);
+}
+.lead-propiedad a:hover,
+.lead-nombre a:hover {
     color: var(--primary);
+    text-decoration: underline;
 }
 
 .lead-mensaje {

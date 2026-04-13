@@ -155,7 +155,7 @@ function cargarLeads(filtro = '') {
                 <td class="lead-nombre">${lead.nombre}</td>
                 <td>${lead.telefono}</td>
                 <td>${lead.email || '<span style="color:var(--gray-400)">—</span>'}</td>
-                <td class="lead-propiedad" title="${propTitulo}">${propTitulo}</td>
+                <td class="lead-propiedad" title="${propTitulo}">${prop ? `<a href="#" onclick="verDetallePropiedad('${prop.id}'); return false;">${propTitulo}</a>` : 'Propiedad eliminada'}</td>
                 <td class="lead-mensaje" title="${lead.mensaje || ''}">${lead.mensaje || '<span style="color:var(--gray-400)">—</span>'}</td>
                 <td>
                     <div class="acciones-grupo">
@@ -236,6 +236,55 @@ function eliminarLead(id) {
     cargarLeads(document.getElementById('buscarLead').value);
 }
 
+// ========== Detalle Propiedad (popup) ==========
+
+function verDetallePropiedad(id) {
+    const prop = buscarPropiedad(id);
+    if (!prop) return;
+
+    const tipoNombre = NOMBRES_TIPO[prop.tipo] || prop.tipo;
+    const icono = ICONOS_TIPO[prop.tipo] || 'fa-building';
+
+    const imagen = prop.imagenes && prop.imagenes.length > 0
+        ? `<img src="${prop.imagenes[0]}" alt="${prop.titulo}">`
+        : `<div class="placeholder-img"><i class="fas ${icono}"></i></div>`;
+
+    let specs = '';
+    if (prop.area) specs += `<div class="spec-item"><i class="fas fa-ruler-combined"></i><div><div class="spec-label">Área</div><div class="spec-value">${prop.area} m²</div></div></div>`;
+    if (prop.habitaciones) specs += `<div class="spec-item"><i class="fas fa-bed"></i><div><div class="spec-label">Habitaciones</div><div class="spec-value">${prop.habitaciones}</div></div></div>`;
+    if (prop.banos) specs += `<div class="spec-item"><i class="fas fa-bath"></i><div><div class="spec-label">Baños</div><div class="spec-value">${prop.banos}</div></div></div>`;
+    if (prop.parqueaderos) specs += `<div class="spec-item"><i class="fas fa-car"></i><div><div class="spec-label">Parqueaderos</div><div class="spec-value">${prop.parqueaderos}</div></div></div>`;
+    if (prop.estrato) specs += `<div class="spec-item"><i class="fas fa-layer-group"></i><div><div class="spec-label">Estrato</div><div class="spec-value">${prop.estrato}</div></div></div>`;
+    if (prop.antiguedad) specs += `<div class="spec-item"><i class="fas fa-calendar"></i><div><div class="spec-label">Antigüedad</div><div class="spec-value">${prop.antiguedad} años</div></div></div>`;
+    if (prop.adminstracion) specs += `<div class="spec-item"><i class="fas fa-file-invoice-dollar"></i><div><div class="spec-label">Administración</div><div class="spec-value">${formatearPrecioAdmin(prop.adminstracion)}/mes</div></div></div>`;
+
+    const modal = document.getElementById('modalPropiedad');
+    const body = document.getElementById('modalPropiedadBody');
+
+    body.innerHTML = `
+        <div class="detalle-imagen">${imagen}</div>
+        <div class="detalle-body">
+            <div class="detalle-header">
+                <h2>${prop.titulo}</h2>
+                <div class="detalle-precio">${formatearPrecioAdmin(prop.precio)}</div>
+            </div>
+            <p class="detalle-ubicacion">
+                <i class="fas fa-map-marker-alt"></i> ${prop.direccion || ''} ${prop.barrio}, ${prop.ciudad}, ${prop.departamento}
+            </p>
+            <div class="detalle-badges">
+                <span class="detalle-badge"><i class="fas ${icono}"></i> ${tipoNombre}</span>
+                ${prop.negociable ? '<span class="detalle-badge" style="background:#e8f5e9;color:#2e7d32;"><i class="fas fa-handshake"></i> Precio negociable</span>' : '<span class="detalle-badge"><i class="fas fa-tag"></i> Precio fijo</span>'}
+                ${prop.estrato ? `<span class="detalle-badge"><i class="fas fa-layer-group"></i> Estrato ${prop.estrato}</span>` : ''}
+                <span class="detalle-badge"><i class="fas fa-calendar-alt"></i> Publicado: ${formatearFechaCorta(prop.fechaPublicacion)}</span>
+            </div>
+            <p class="detalle-descripcion">${prop.descripcion || '<em>Sin descripción</em>'}</p>
+            <div class="detalle-specs">${specs}</div>
+        </div>
+    `;
+
+    modal.classList.add('active');
+}
+
 // ========== Propiedades Admin ==========
 
 function cargarPropiedadesAdmin() {
@@ -279,7 +328,7 @@ function cargarPropiedadesAdmin() {
             <tr>
                 <td class="lead-fecha">${formatearFechaCorta(prop.fechaPublicacion)}</td>
                 <td><span class="tipo-badge ${badgeClass}">${tipoNombre}</span></td>
-                <td class="lead-nombre">${prop.titulo}</td>
+                <td class="lead-nombre"><a href="#" onclick="verDetallePropiedad('${prop.id}'); return false;">${prop.titulo}</a></td>
                 <td>${prop.ciudad}, ${prop.departamento}</td>
                 <td>${formatearPrecioAdmin(prop.precio)}</td>
                 <td>
@@ -412,6 +461,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('modalLead').addEventListener('click', (e) => {
         if (e.target.id === 'modalLead') {
             document.getElementById('modalLead').classList.remove('active');
+        }
+    });
+
+    // Modal propiedad
+    document.getElementById('cerrarModalPropiedad').addEventListener('click', () => {
+        document.getElementById('modalPropiedad').classList.remove('active');
+    });
+    document.getElementById('modalPropiedad').addEventListener('click', (e) => {
+        if (e.target.id === 'modalPropiedad') {
+            document.getElementById('modalPropiedad').classList.remove('active');
         }
     });
 });
