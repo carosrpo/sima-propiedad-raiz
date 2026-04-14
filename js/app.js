@@ -481,9 +481,9 @@ function initFormulario() {
             antiguedad: Number(document.getElementById('antiguedad').value) || 0,
             adminstracion: valorNumerico('administracion'),
             negociable: document.getElementById('negociable').checked,
-            contactoNombre: '',
-            contactoTelefono: '',
-            contactoEmail: '',
+            contactoNombre: document.getElementById('contactoNombre').value.trim(),
+            contactoTelefono: document.getElementById('contactoTelefono').value.trim(),
+            contactoEmail: document.getElementById('contactoEmail').value.trim(),
             imagenes: imagenes,
             fechaPublicacion: new Date().toISOString().split('T')[0]
         };
@@ -506,6 +506,8 @@ function validarFormulario() {
         { id: 'ciudad', msg: 'Seleccione una ciudad' },
         { id: 'barrio', msg: 'Ingrese el barrio' },
         { id: 'area', msg: 'Ingrese el área' },
+        { id: 'contactoNombre', msg: 'Ingrese su nombre' },
+        { id: 'contactoTelefono', msg: 'Ingrese su teléfono' },
     ];
 
     // Limpiar errores previos

@@ -279,6 +279,23 @@ function verDetallePropiedad(id) {
             </div>
             <p class="detalle-descripcion">${prop.descripcion || '<em>Sin descripción</em>'}</p>
             <div class="detalle-specs">${specs}</div>
+            <div class="vendedor-contacto">
+                <h4><i class="fas fa-user-tie"></i> Contacto del vendedor</h4>
+                <div class="vendedor-datos">
+                    <div class="vendedor-campo">
+                        <i class="fas fa-user"></i>
+                        <span>${prop.contactoNombre || '<em>No registrado</em>'}</span>
+                    </div>
+                    <div class="vendedor-campo">
+                        <i class="fas fa-phone"></i>
+                        ${prop.contactoTelefono ? `<a href="https://wa.me/57${prop.contactoTelefono}" target="_blank">+57 ${prop.contactoTelefono}</a>` : '<em>No registrado</em>'}
+                    </div>
+                    <div class="vendedor-campo">
+                        <i class="fas fa-envelope"></i>
+                        ${prop.contactoEmail ? `<a href="mailto:${prop.contactoEmail}">${prop.contactoEmail}</a>` : '<em>No registrado</em>'}
+                    </div>
+                </div>
+            </div>
         </div>
     `;
 

@@ -444,6 +444,54 @@
     gap: 4px;
 }
 
+/* Contacto del vendedor en popup */
+.vendedor-contacto {
+    margin-top: 20px;
+    background: var(--gray-100);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    border-left: 3px solid var(--primary);
+}
+.vendedor-contacto h4 {
+    font-size: 0.95rem;
+    color: var(--primary);
+    margin-bottom: 12px;
+}
+.vendedor-contacto h4 i {
+    margin-right: 6px;
+}
+.vendedor-datos {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.vendedor-campo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--gray-700);
+}
+.vendedor-campo i {
+    width: 18px;
+    text-align: center;
+    color: var(--primary-light);
+    font-size: 0.85rem;
+}
+.vendedor-campo a {
+    color: var(--primary-light);
+    font-weight: 500;
+    transition: var(--transition);
+}
+.vendedor-campo a:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+.vendedor-campo em {
+    color: var(--gray-400);
+    font-size: 0.85rem;
+}
+
 /* Tipo badge en tabla */
 .tipo-badge {
     display: inline-block;
