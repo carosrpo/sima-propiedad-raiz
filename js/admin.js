@@ -348,6 +348,7 @@ function cargarPropiedadesAdmin() {
                 <td class="lead-nombre"><a href="#" onclick="verDetallePropiedad('${prop.id}'); return false;">${prop.titulo}</a></td>
                 <td>${prop.ciudad}, ${prop.departamento}</td>
                 <td>${formatearPrecioAdmin(prop.precio)}</td>
+                <td>${prop.negociable ? '<span style="color:var(--success);font-weight:600;">Sí</span>' : '<span style="color:var(--gray-400);">No</span>'}</td>
                 <td>
                     <span style="font-weight:700; color: ${leadsCount > 0 ? 'var(--success)' : 'var(--gray-400)'}">
                         ${leadsCount}
