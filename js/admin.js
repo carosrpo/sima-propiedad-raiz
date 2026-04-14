@@ -86,6 +86,9 @@ function cargarDashboard() {
     cargarEstadisticas();
     cargarLeads();
     cargarPropiedadesAdmin();
+    initSortPropiedades();
+    initFiltrosPropiedades();
+    initResizeColumnas();
 }
 
 function cargarEstadisticas() {
@@ -304,11 +307,16 @@ function verDetallePropiedad(id) {
 
 // ========== Propiedades Admin ==========
 
+// Estado de sort
+let propSort = { col: null, dir: 'asc' };
+
 function cargarPropiedadesAdmin() {
     let propiedades = obtenerPropiedadesAdmin();
+    const leads = obtenerLeads();
+
+    // Búsqueda global
     const filtro = document.getElementById('buscarPropiedad');
     const q = filtro ? filtro.value.toLowerCase() : '';
-
     if (q) {
         propiedades = propiedades.filter(p =>
             p.titulo.toLowerCase().includes(q) ||
@@ -317,10 +325,70 @@ function cargarPropiedadesAdmin() {
         );
     }
 
+    // Filtros por columna
+    const filtroFecha = document.querySelector('[data-filter="fecha"]');
+    const filtroTipo = document.querySelector('[data-filter="tipo"]');
+    const filtroTitulo = document.querySelector('[data-filter="titulo"]');
+    const filtroUbicacion = document.querySelector('[data-filter="ubicacion"]');
+    const filtroPrecio = document.querySelector('[data-filter="precio"]');
+    const filtroNegociable = document.querySelector('[data-filter="negociable"]');
+    const filtroLeads = document.querySelector('[data-filter="leads"]');
+
+    if (filtroFecha && filtroFecha.value) {
+        const v = filtroFecha.value.toLowerCase();
+        propiedades = propiedades.filter(p => formatearFechaCorta(p.fechaPublicacion).toLowerCase().includes(v));
+    }
+    if (filtroTipo && filtroTipo.value) {
+        propiedades = propiedades.filter(p => p.tipo === filtroTipo.value);
+    }
+    if (filtroTitulo && filtroTitulo.value) {
+        const v = filtroTitulo.value.toLowerCase();
+        propiedades = propiedades.filter(p => p.titulo.toLowerCase().includes(v));
+    }
+    if (filtroUbicacion && filtroUbicacion.value) {
+        const v = filtroUbicacion.value.toLowerCase();
+        propiedades = propiedades.filter(p => (p.ciudad + ' ' + p.departamento).toLowerCase().includes(v));
+    }
+    if (filtroPrecio && filtroPrecio.value) {
+        const v = Number(filtroPrecio.value.replace(/\D/g, ''));
+        if (v) propiedades = propiedades.filter(p => p.precio >= v);
+    }
+    if (filtroNegociable && filtroNegociable.value) {
+        const esNeg = filtroNegociable.value === 'si';
+        propiedades = propiedades.filter(p => !!p.negociable === esNeg);
+    }
+    if (filtroLeads && filtroLeads.value) {
+        const v = Number(filtroLeads.value);
+        if (!isNaN(v)) propiedades = propiedades.filter(p => leads.filter(l => l.propiedadId === p.id).length >= v);
+    }
+
+    // Ordenar
+    if (propSort.col) {
+        propiedades.sort((a, b) => {
+            let va, vb;
+            switch (propSort.col) {
+                case 'fecha': va = a.fechaPublicacion; vb = b.fechaPublicacion; break;
+                case 'tipo': va = a.tipo; vb = b.tipo; break;
+                case 'titulo': va = a.titulo.toLowerCase(); vb = b.titulo.toLowerCase(); break;
+                case 'ubicacion': va = a.ciudad; vb = b.ciudad; break;
+                case 'precio': va = a.precio; vb = b.precio; break;
+                case 'negociable': va = a.negociable ? 1 : 0; vb = b.negociable ? 1 : 0; break;
+                case 'leads':
+                    va = leads.filter(l => l.propiedadId === a.id).length;
+                    vb = leads.filter(l => l.propiedadId === b.id).length;
+                    break;
+                default: return 0;
+            }
+            if (va < vb) return propSort.dir === 'asc' ? -1 : 1;
+            if (va > vb) return propSort.dir === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }
+
+    // Render
     const tbody = document.getElementById('tbodyPropiedades');
     const vacio = document.getElementById('propiedadesVacio');
     const tabla = document.querySelector('#tablaPropiedades');
-    const leads = obtenerLeads();
 
     if (propiedades.length === 0) {
         tabla.style.display = 'none';
@@ -357,6 +425,85 @@ function cargarPropiedadesAdmin() {
             </tr>
         `;
     }).join('');
+}
+
+// ========== Sort por columna ==========
+
+function initSortPropiedades() {
+    document.querySelectorAll('#tablaPropiedades .th-content').forEach(thContent => {
+        thContent.addEventListener('click', () => {
+            const th = thContent.closest('th');
+            const col = th.dataset.sort;
+            if (!col) return;
+
+            // Toggle direction
+            if (propSort.col === col) {
+                propSort.dir = propSort.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                propSort.col = col;
+                propSort.dir = 'asc';
+            }
+
+            // Update icons
+            document.querySelectorAll('#tablaPropiedades th').forEach(t => {
+                t.classList.remove('sort-asc', 'sort-desc');
+                const icon = t.querySelector('.sort-icon');
+                if (icon) { icon.className = 'fas fa-sort sort-icon'; }
+            });
+            th.classList.add(propSort.dir === 'asc' ? 'sort-asc' : 'sort-desc');
+            const icon = th.querySelector('.sort-icon');
+            if (icon) { icon.className = `fas fa-sort-${propSort.dir === 'asc' ? 'up' : 'down'} sort-icon`; }
+
+            cargarPropiedadesAdmin();
+        });
+    });
+}
+
+// ========== Filtros por columna ==========
+
+function initFiltrosPropiedades() {
+    document.querySelectorAll('#tablaPropiedades .th-filter input, #tablaPropiedades .th-filter select').forEach(el => {
+        el.addEventListener('input', () => cargarPropiedadesAdmin());
+        el.addEventListener('change', () => cargarPropiedadesAdmin());
+        // Prevent sort when clicking in filter
+        el.addEventListener('click', (e) => e.stopPropagation());
+    });
+}
+
+// ========== Resize columnas ==========
+
+function initResizeColumnas() {
+    const tabla = document.getElementById('tablaPropiedades');
+    if (!tabla) return;
+
+    const handles = tabla.querySelectorAll('.resize-handle');
+
+    handles.forEach(handle => {
+        let startX, startWidth, th;
+
+        handle.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            th = handle.closest('th');
+            startX = e.pageX;
+            startWidth = th.offsetWidth;
+            handle.classList.add('active');
+
+            function onMouseMove(e) {
+                const newWidth = startWidth + (e.pageX - startX);
+                if (newWidth >= 60) {
+                    th.style.width = newWidth + 'px';
+                }
+            }
+            function onMouseUp() {
+                handle.classList.remove('active');
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+            }
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
+    });
 }
 
 // ========== Exportar CSV ==========

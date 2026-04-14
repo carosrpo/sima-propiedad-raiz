@@ -369,6 +369,83 @@
     white-space: nowrap;
 }
 
+/* Resizable columns */
+.tabla-resizable {
+    table-layout: fixed;
+}
+
+.tabla-resizable th {
+    position: relative;
+    overflow: hidden;
+}
+
+.resize-handle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    cursor: col-resize;
+    background: transparent;
+    transition: background 0.2s;
+    z-index: 2;
+}
+.resize-handle:hover,
+.resize-handle.active {
+    background: var(--primary-light);
+}
+
+/* Sort and filter headers */
+.th-content {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+    margin-bottom: 6px;
+}
+.th-content:hover {
+    color: var(--primary);
+}
+
+.sort-icon {
+    font-size: 0.65rem;
+    opacity: 0.4;
+    transition: var(--transition);
+}
+.th-content:hover .sort-icon {
+    opacity: 0.8;
+}
+th.sort-asc .sort-icon,
+th.sort-desc .sort-icon {
+    opacity: 1;
+    color: var(--primary-light);
+}
+
+.th-filter input,
+.th-filter select {
+    width: 100%;
+    padding: 4px 6px;
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: var(--gray-700);
+    background: var(--white);
+    outline: none;
+    transition: var(--transition);
+}
+.th-filter input:focus,
+.th-filter select:focus {
+    border-color: var(--primary-light);
+}
+
+/* Resizable column content */
+.tabla-resizable td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .tabla-datos td {
     padding: 14px 16px;
     font-size: 0.9rem;

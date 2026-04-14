@@ -164,16 +164,91 @@
                     </div>
                 </div>
                 <div class="tabla-responsive">
-                    <table class="tabla-datos" id="tablaPropiedades">
+                    <table class="tabla-datos tabla-resizable" id="tablaPropiedades">
                         <thead>
                             <tr>
-                                <th>Fecha</th>
-                                <th>Tipo</th>
-                                <th>Título</th>
-                                <th>Ubicación</th>
-                                <th>Precio</th>
-                                <th>Negociable</th>
-                                <th>Leads</th>
+                                <th data-col="fecha" data-sort="fecha">
+                                    <div class="th-content">
+                                        <span>Fecha</span>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </div>
+                                    <div class="th-filter">
+                                        <input type="text" placeholder="Filtrar..." data-filter="fecha">
+                                    </div>
+                                    <div class="resize-handle"></div>
+                                </th>
+                                <th data-col="tipo" data-sort="tipo">
+                                    <div class="th-content">
+                                        <span>Tipo</span>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </div>
+                                    <div class="th-filter">
+                                        <select data-filter="tipo">
+                                            <option value="">Todos</option>
+                                            <option value="casa">Casa</option>
+                                            <option value="apartamento">Apartamento</option>
+                                            <option value="lote">Lote</option>
+                                            <option value="finca">Finca</option>
+                                            <option value="local">Local</option>
+                                            <option value="oficina">Oficina</option>
+                                            <option value="bodega">Bodega</option>
+                                        </select>
+                                    </div>
+                                    <div class="resize-handle"></div>
+                                </th>
+                                <th data-col="titulo" data-sort="titulo">
+                                    <div class="th-content">
+                                        <span>Título</span>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </div>
+                                    <div class="th-filter">
+                                        <input type="text" placeholder="Filtrar..." data-filter="titulo">
+                                    </div>
+                                    <div class="resize-handle"></div>
+                                </th>
+                                <th data-col="ubicacion" data-sort="ubicacion">
+                                    <div class="th-content">
+                                        <span>Ubicación</span>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </div>
+                                    <div class="th-filter">
+                                        <input type="text" placeholder="Filtrar..." data-filter="ubicacion">
+                                    </div>
+                                    <div class="resize-handle"></div>
+                                </th>
+                                <th data-col="precio" data-sort="precio">
+                                    <div class="th-content">
+                                        <span>Precio</span>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </div>
+                                    <div class="th-filter">
+                                        <input type="text" placeholder="Filtrar..." data-filter="precio">
+                                    </div>
+                                    <div class="resize-handle"></div>
+                                </th>
+                                <th data-col="negociable" data-sort="negociable">
+                                    <div class="th-content">
+                                        <span>Negociable</span>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </div>
+                                    <div class="th-filter">
+                                        <select data-filter="negociable">
+                                            <option value="">Todos</option>
+                                            <option value="si">Sí</option>
+                                            <option value="no">No</option>
+                                        </select>
+                                    </div>
+                                    <div class="resize-handle"></div>
+                                </th>
+                                <th data-col="leads" data-sort="leads">
+                                    <div class="th-content">
+                                        <span>Leads</span>
+                                        <i class="fas fa-sort sort-icon"></i>
+                                    </div>
+                                    <div class="th-filter">
+                                        <input type="text" placeholder="Filtrar..." data-filter="leads">
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="tbodyPropiedades">
