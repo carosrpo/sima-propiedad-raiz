@@ -88,6 +88,8 @@ function cargarDashboard() {
     cargarPropiedadesAdmin();
     initSortPropiedades();
     initFiltrosPropiedades();
+    initSortLeads();
+    initFiltrosLeads();
     initResizeColumnas();
 }
 
@@ -120,9 +122,13 @@ function buscarPropiedad(id) {
     return propiedades.find(p => p.id === id);
 }
 
+// Estado de sort leads
+let leadSort = { col: null, dir: 'asc' };
+
 function cargarLeads(filtro = '') {
     let leads = obtenerLeads();
 
+    // Búsqueda global
     if (filtro) {
         const q = filtro.toLowerCase();
         leads = leads.filter(l => {
@@ -132,6 +138,64 @@ function cargarLeads(filtro = '') {
                    l.telefono.includes(q) ||
                    (l.email && l.email.toLowerCase().includes(q)) ||
                    propTitulo.includes(q);
+        });
+    }
+
+    // Filtros por columna
+    const fFecha = document.querySelector('[data-filter-lead="fecha"]');
+    const fNombre = document.querySelector('[data-filter-lead="nombre"]');
+    const fTelefono = document.querySelector('[data-filter-lead="telefono"]');
+    const fEmail = document.querySelector('[data-filter-lead="email"]');
+    const fPropiedad = document.querySelector('[data-filter-lead="propiedad"]');
+    const fMensaje = document.querySelector('[data-filter-lead="mensaje"]');
+
+    if (fFecha && fFecha.value) {
+        const v = fFecha.value.toLowerCase();
+        leads = leads.filter(l => formatearFecha(l.fecha).toLowerCase().includes(v));
+    }
+    if (fNombre && fNombre.value) {
+        const v = fNombre.value.toLowerCase();
+        leads = leads.filter(l => l.nombre.toLowerCase().includes(v));
+    }
+    if (fTelefono && fTelefono.value) {
+        leads = leads.filter(l => l.telefono.includes(fTelefono.value));
+    }
+    if (fEmail && fEmail.value) {
+        const v = fEmail.value.toLowerCase();
+        leads = leads.filter(l => l.email && l.email.toLowerCase().includes(v));
+    }
+    if (fPropiedad && fPropiedad.value) {
+        const v = fPropiedad.value.toLowerCase();
+        leads = leads.filter(l => {
+            const prop = buscarPropiedad(l.propiedadId);
+            return prop && prop.titulo.toLowerCase().includes(v);
+        });
+    }
+    if (fMensaje && fMensaje.value) {
+        const v = fMensaje.value.toLowerCase();
+        leads = leads.filter(l => l.mensaje && l.mensaje.toLowerCase().includes(v));
+    }
+
+    // Ordenar
+    if (leadSort.col) {
+        leads.sort((a, b) => {
+            let va, vb;
+            switch (leadSort.col) {
+                case 'fecha': va = a.fecha; vb = b.fecha; break;
+                case 'nombre': va = a.nombre.toLowerCase(); vb = b.nombre.toLowerCase(); break;
+                case 'telefono': va = a.telefono; vb = b.telefono; break;
+                case 'email': va = (a.email || '').toLowerCase(); vb = (b.email || '').toLowerCase(); break;
+                case 'propiedad':
+                    const pa = buscarPropiedad(a.propiedadId);
+                    const pb = buscarPropiedad(b.propiedadId);
+                    va = pa ? pa.titulo.toLowerCase() : ''; vb = pb ? pb.titulo.toLowerCase() : '';
+                    break;
+                case 'mensaje': va = (a.mensaje || '').toLowerCase(); vb = (b.mensaje || '').toLowerCase(); break;
+                default: return 0;
+            }
+            if (va < vb) return leadSort.dir === 'asc' ? -1 : 1;
+            if (va > vb) return leadSort.dir === 'asc' ? 1 : -1;
+            return 0;
         });
     }
 
@@ -473,36 +537,71 @@ function initFiltrosPropiedades() {
 // ========== Resize columnas ==========
 
 function initResizeColumnas() {
-    const tabla = document.getElementById('tablaPropiedades');
-    if (!tabla) return;
+    document.querySelectorAll('.tabla-resizable').forEach(tabla => {
+        tabla.querySelectorAll('.resize-handle').forEach(handle => {
+            let startX, startWidth, th;
 
-    const handles = tabla.querySelectorAll('.resize-handle');
+            handle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                th = handle.closest('th');
+                startX = e.pageX;
+                startWidth = th.offsetWidth;
+                handle.classList.add('active');
 
-    handles.forEach(handle => {
-        let startX, startWidth, th;
-
-        handle.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            th = handle.closest('th');
-            startX = e.pageX;
-            startWidth = th.offsetWidth;
-            handle.classList.add('active');
-
-            function onMouseMove(e) {
-                const newWidth = startWidth + (e.pageX - startX);
-                if (newWidth >= 60) {
-                    th.style.width = newWidth + 'px';
+                function onMouseMove(e) {
+                    const newWidth = startWidth + (e.pageX - startX);
+                    if (newWidth >= 60) {
+                        th.style.width = newWidth + 'px';
+                    }
                 }
-            }
-            function onMouseUp() {
-                handle.classList.remove('active');
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
+                function onMouseUp() {
+                    handle.classList.remove('active');
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+        });
+    });
+}
+
+// ========== Sort y Filtros Leads ==========
+
+function initSortLeads() {
+    document.querySelectorAll('#tablaLeads .th-content').forEach(thContent => {
+        thContent.addEventListener('click', () => {
+            const th = thContent.closest('th');
+            const col = th.dataset.sort;
+            if (!col) return;
+
+            if (leadSort.col === col) {
+                leadSort.dir = leadSort.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                leadSort.col = col;
+                leadSort.dir = 'asc';
             }
 
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
+            document.querySelectorAll('#tablaLeads th').forEach(t => {
+                t.classList.remove('sort-asc', 'sort-desc');
+                const icon = t.querySelector('.sort-icon');
+                if (icon) { icon.className = 'fas fa-sort sort-icon'; }
+            });
+            th.classList.add(leadSort.dir === 'asc' ? 'sort-asc' : 'sort-desc');
+            const icon = th.querySelector('.sort-icon');
+            if (icon) { icon.className = `fas fa-sort-${leadSort.dir === 'asc' ? 'up' : 'down'} sort-icon`; }
+
+            cargarLeads(document.getElementById('buscarLead').value);
         });
+    });
+}
+
+function initFiltrosLeads() {
+    document.querySelectorAll('#tablaLeads .th-filter input, #tablaLeads .th-filter select').forEach(el => {
+        el.addEventListener('input', () => cargarLeads(document.getElementById('buscarLead').value));
+        el.addEventListener('change', () => cargarLeads(document.getElementById('buscarLead').value));
+        el.addEventListener('click', (e) => e.stopPropagation());
     });
 }
 

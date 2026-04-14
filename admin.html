@@ -132,16 +132,42 @@
 
                 <!-- Tabla de leads -->
                 <div class="tabla-responsive">
-                    <table class="tabla-datos" id="tablaLeads">
+                    <table class="tabla-datos tabla-resizable" id="tablaLeads">
                         <thead>
                             <tr>
-                                <th>Fecha</th>
-                                <th>Nombre</th>
-                                <th>Teléfono</th>
-                                <th>Email</th>
-                                <th>Propiedad</th>
-                                <th>Mensaje</th>
-                                <th>Acciones</th>
+                                <th data-sort="fecha">
+                                    <div class="th-content"><span>Fecha</span><i class="fas fa-sort sort-icon"></i></div>
+                                    <div class="th-filter"><input type="text" placeholder="Filtrar..." data-filter-lead="fecha"></div>
+                                    <div class="resize-handle"></div>
+                                </th>
+                                <th data-sort="nombre">
+                                    <div class="th-content"><span>Nombre</span><i class="fas fa-sort sort-icon"></i></div>
+                                    <div class="th-filter"><input type="text" placeholder="Filtrar..." data-filter-lead="nombre"></div>
+                                    <div class="resize-handle"></div>
+                                </th>
+                                <th data-sort="telefono">
+                                    <div class="th-content"><span>Teléfono</span><i class="fas fa-sort sort-icon"></i></div>
+                                    <div class="th-filter"><input type="text" placeholder="Filtrar..." data-filter-lead="telefono"></div>
+                                    <div class="resize-handle"></div>
+                                </th>
+                                <th data-sort="email">
+                                    <div class="th-content"><span>Email</span><i class="fas fa-sort sort-icon"></i></div>
+                                    <div class="th-filter"><input type="text" placeholder="Filtrar..." data-filter-lead="email"></div>
+                                    <div class="resize-handle"></div>
+                                </th>
+                                <th data-sort="propiedad">
+                                    <div class="th-content"><span>Propiedad</span><i class="fas fa-sort sort-icon"></i></div>
+                                    <div class="th-filter"><input type="text" placeholder="Filtrar..." data-filter-lead="propiedad"></div>
+                                    <div class="resize-handle"></div>
+                                </th>
+                                <th data-sort="mensaje">
+                                    <div class="th-content"><span>Mensaje</span><i class="fas fa-sort sort-icon"></i></div>
+                                    <div class="th-filter"><input type="text" placeholder="Filtrar..." data-filter-lead="mensaje"></div>
+                                    <div class="resize-handle"></div>
+                                </th>
+                                <th>
+                                    <div class="th-content"><span>Acciones</span></div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="tbodyLeads">
