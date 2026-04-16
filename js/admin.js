@@ -113,6 +113,14 @@ function obtenerLeads() {
     return JSON.parse(localStorage.getItem('leads') || '[]');
 }
 
+function actualizarLead(id, campo, valor) {
+    let leads = obtenerLeads();
+    const idx = leads.findIndex(l => l.id === id);
+    if (idx === -1) return;
+    leads[idx][campo] = valor;
+    localStorage.setItem('leads', JSON.stringify(leads));
+}
+
 function obtenerPropiedadesAdmin() {
     return JSON.parse(localStorage.getItem('propiedades') || '[]');
 }
@@ -176,6 +184,23 @@ function cargarLeads(filtro = '') {
         leads = leads.filter(l => l.mensaje && l.mensaje.toLowerCase().includes(v));
     }
 
+    // Filtros nuevas columnas
+    const fContactado = document.querySelector('[data-filter-lead="contactado"]');
+    const fSeguimiento = document.querySelector('[data-filter-lead="seguimiento"]');
+    const fEstado = document.querySelector('[data-filter-lead="estado"]');
+
+    if (fContactado && fContactado.value) {
+        const esSi = fContactado.value === 'si';
+        leads = leads.filter(l => !!l.contactado === esSi);
+    }
+    if (fSeguimiento && fSeguimiento.value) {
+        const v = fSeguimiento.value.toLowerCase();
+        leads = leads.filter(l => l.seguimiento && l.seguimiento.toLowerCase().includes(v));
+    }
+    if (fEstado && fEstado.value) {
+        leads = leads.filter(l => (l.estado || 'pendiente') === fEstado.value);
+    }
+
     // Ordenar
     if (leadSort.col) {
         leads.sort((a, b) => {
@@ -191,6 +216,9 @@ function cargarLeads(filtro = '') {
                     va = pa ? pa.titulo.toLowerCase() : ''; vb = pb ? pb.titulo.toLowerCase() : '';
                     break;
                 case 'mensaje': va = (a.mensaje || '').toLowerCase(); vb = (b.mensaje || '').toLowerCase(); break;
+                case 'contactado': va = a.contactado ? 1 : 0; vb = b.contactado ? 1 : 0; break;
+                case 'seguimiento': va = (a.seguimiento || '').toLowerCase(); vb = (b.seguimiento || '').toLowerCase(); break;
+                case 'estado': va = (a.estado || 'pendiente'); vb = (b.estado || 'pendiente'); break;
                 default: return 0;
             }
             if (va < vb) return leadSort.dir === 'asc' ? -1 : 1;
@@ -224,6 +252,25 @@ function cargarLeads(filtro = '') {
                 <td>${lead.email || '<span style="color:var(--gray-400)">—</span>'}</td>
                 <td class="lead-propiedad" title="${propTitulo}">${prop ? `<a href="#" onclick="verDetallePropiedad('${prop.id}'); return false;">${propTitulo}</a>` : 'Propiedad eliminada'}</td>
                 <td class="lead-mensaje" title="${lead.mensaje || ''}">${lead.mensaje || '<span style="color:var(--gray-400)">—</span>'}</td>
+                <td>
+                    <label class="lead-toggle-contactado">
+                        <input type="checkbox" ${lead.contactado ? 'checked' : ''} onchange="actualizarLead('${lead.id}', 'contactado', this.checked); cargarLeads(document.getElementById('buscarLead').value);">
+                        <span class="lead-toggle-slider"></span>
+                        <span class="lead-toggle-label">${lead.contactado ? 'Sí' : 'No'}</span>
+                    </label>
+                </td>
+                <td class="lead-seguimiento-cell">
+                    <div class="seguimiento-display" onclick="editarSeguimiento(this, '${lead.id}')" title="${lead.seguimiento || 'Clic para agregar nota'}">
+                        ${lead.seguimiento || '<span style="color:var(--gray-400)">Agregar nota...</span>'}
+                    </div>
+                </td>
+                <td>
+                    <select class="lead-estado-select estado-${lead.estado || 'pendiente'}" onchange="actualizarLead('${lead.id}', 'estado', this.value); this.className='lead-estado-select estado-'+this.value; cargarLeads(document.getElementById('buscarLead').value);">
+                        <option value="pendiente" ${(!lead.estado || lead.estado === 'pendiente') ? 'selected' : ''}>Pendiente</option>
+                        <option value="cliente" ${lead.estado === 'cliente' ? 'selected' : ''}>Cliente</option>
+                        <option value="declinado" ${lead.estado === 'declinado' ? 'selected' : ''}>Declinado</option>
+                    </select>
+                </td>
                 <td>
                     <div class="acciones-grupo">
                         <button class="btn-icon" title="Ver detalle" onclick="verDetalleLead('${lead.id}')">
@@ -290,6 +337,38 @@ function verDetalleLead(id) {
     `;
 
     modal.classList.add('active');
+}
+
+function editarSeguimiento(elem, id) {
+    if (elem.querySelector('textarea')) return; // ya está en edición
+
+    const leads = obtenerLeads();
+    const lead = leads.find(l => l.id === id);
+    if (!lead) return;
+
+    const valorActual = lead.seguimiento || '';
+    elem.innerHTML = `<textarea class="seguimiento-textarea" rows="3">${valorActual.replace(/</g, '&lt;')}</textarea>`;
+    const textarea = elem.querySelector('textarea');
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+
+    const guardar = () => {
+        const nuevo = textarea.value.trim();
+        actualizarLead(id, 'seguimiento', nuevo);
+        cargarLeads(document.getElementById('buscarLead').value);
+    };
+
+    textarea.addEventListener('blur', guardar);
+    textarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            textarea.blur();
+        }
+        if (e.key === 'Escape') {
+            textarea.value = valorActual;
+            textarea.blur();
+        }
+    });
 }
 
 function eliminarLead(id) {
@@ -614,7 +693,7 @@ function exportarLeadsCSV() {
         return;
     }
 
-    const headers = ['Fecha', 'Nombre', 'Teléfono', 'Email', 'Propiedad', 'Mensaje'];
+    const headers = ['Fecha', 'Nombre', 'Teléfono', 'Email', 'Propiedad', 'Mensaje', 'Contactado', 'Seguimiento', 'Estado'];
     const rows = leads.map(lead => {
         const prop = buscarPropiedad(lead.propiedadId);
         return [
@@ -623,8 +702,11 @@ function exportarLeadsCSV() {
             lead.telefono,
             lead.email || '',
             prop ? prop.titulo : 'Eliminada',
-            lead.mensaje || ''
-        ].map(v => `"${v.replace(/"/g, '""')}"`).join(',');
+            lead.mensaje || '',
+            lead.contactado ? 'Sí' : 'No',
+            lead.seguimiento || '',
+            lead.estado || 'pendiente'
+        ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
     });
 
     const csv = [headers.join(','), ...rows].join('\n');
